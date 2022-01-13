@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ChessRoyale</title>
+
+</head>
+
+<body>
+    <canvas id="canvas" width="700" height="300"></canvas>
+    <div id="control"></div>
+    <img id="spriteSheet" src="assets/spriteSheet.png" style="display: none;">
+    <script>
+
+        const boardWidth = 4;
+        const boardHeight = 6;
+        const stepsPerTurn = 3;
+        const moveTime = 300;
+        const moveWait = 100;
+
+    </script>
+    <script type="module" src="renderer.js"></script>
+    <script type="module" src="gamePacer.js"></script>
+    <script type="module" src="placing_logic.js"></script>
+    <script type="module" src="utils.js"></script>
+    <script type="module" src="rustComunications.js"></script>
+
+</body>
+
+</html>
