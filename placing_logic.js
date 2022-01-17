@@ -1,15 +1,19 @@
 import { ScreenToWorld } from "./utils.js"
-import { rust_placePiece } from "./rustComunications.js"
+import { rust_placePiece, rust_freeSpace } from "./rustComunications.js"
 export let current_placing_piece = "Kw";
 let last_placed_piece = "";
 let resolve = () => { };
 
 function random_piece_type() {
+    return "Q"
     return ["P", "Q", "K", "B", "H", "T"][Math.floor(Math.random() * 5.9)]
 }
 
-export function place_player(player) {
-    let type = (player == "w") ? random_piece_type() : last_placed_piece[0]
+export function place_player(player, piece) {
+    console.log(piece)
+    let type = piece || (player == "w") ? random_piece_type() : last_placed_piece[0]
+    console.log(type)
+
     current_placing_piece = type + player;
     console.log("new piece: ", current_placing_piece)
     return new Promise((r) => {
@@ -24,7 +28,7 @@ export function pos_owner(x, y) {
 
 function alowed_pos(x, y) {
     let owner = current_placing_piece[1];
-    return owner == pos_owner(x, y)// TODO preguntar a rust si hay algo en la casilla
+    return owner == pos_owner(x, y) && rust_freeSpace(x, y)
 }
 
 

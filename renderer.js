@@ -18,22 +18,14 @@ function UItick() {
 
 let moveStartT = 0
 const moveTime = 100;
-function BoardTick(optimal) {
-    if (!optimal) {
-        RedrawBoard();
-    }
+function BoardTick() { // TODO pintar las piezas que se mueven por delante y las comidas por detrás
+    RedrawBoard();
+
     let t = (new Date()).getTime();
     for (let piece of board) {
-        if (!optimal || moving(piece)) {
-            clearPosition(piece.pos);
-            clearPosition(piece.last_pos);
-            drawPiece(piece, (t - moveStartT) / moveTime);
-        }
+        drawPiece(piece, (t - moveStartT) / (moveTime * 10));
     }
-}
 
-function moving(p){
-    return p.pos != p.last_pos
 }
 
 const transition_speed = 30; // inversed
@@ -78,18 +70,16 @@ function ColorPaleteTick() { // returns if the palete was changed
     return diff > 0.1;
 }
 
-const BlackMax = 0;
-const BlackMin = 40;
+const BlackMax = 70;
+const BlackMin = 80;
 
 const WhiteMax = 255;
-const WhiteMin = 100
+const WhiteMin = 150
 
 let blackTileBlackPiece = BlackMax
 let whiteTileBlackPiece = WhiteMax
 let blackTileWhitePiece = BlackMax
 let whiteTileWhitePiece = WhiteMax
-
-
 
 function clearPosition(p) {
     let { x, y } = WorldToScreen(p);
@@ -146,23 +136,25 @@ function interpolate(pos0, posF, t) { // t in [0,1]
 function drawPiece(piece, t) {
 
     let pos = WorldToScreen(interpolate(piece.last_pos, piece.pos, t));
+    let size = piece.being_eatten ? 1 - smooth(-1 + 2 * t) : 1;
     let [sx, sy, swidth, sheight] = {
-        "Qw": [0 * 2000 / 6, 0, 333, 333],
-        "Kw": [1 * 2000 / 6, 0, 333, 333],
+        "Kw": [0 * 2000 / 6, 0, 333, 333],
+        "Qw": [1 * 2000 / 6, 0, 333, 333],
         "Bw": [2 * 2000 / 6, 0, 333, 333],
         "Hw": [3 * 2000 / 6, 0, 333, 333],
         "Tw": [4 * 2000 / 6, 0, 333, 333],
         "Pw": [5 * 2000 / 6, 0, 333, 333],
 
-        "Qb": [0 * 2000 / 6, 333, 333, 333],
-        "Kb": [1 * 2000 / 6, 333, 333, 333],
+        "Kb": [0 * 2000 / 6, 333, 333, 333],
+        "Qb": [1 * 2000 / 6, 333, 333, 333],
         "Bb": [2 * 2000 / 6, 333, 333, 333],
         "Hb": [3 * 2000 / 6, 333, 333, 333],
         "Tb": [4 * 2000 / 6, 333, 333, 333],
         "Pb": [5 * 2000 / 6, 333, 333, 333]
 
     }[piece.pieceType];
-    ctx.drawImage(document.getElementById("spriteSheet"), sx, sy, swidth, sheight, pos.x, pos.y, tileSize, tileSize);
+    let sizeOffset = (1 - size) * tileSize / 2;
+    ctx.drawImage(document.getElementById("spriteSheet"), sx, sy, swidth, sheight, pos.x + sizeOffset, pos.y + sizeOffset, tileSize * size, tileSize * size);
 }
 
 requestAnimationFrame(tick);

@@ -1,13 +1,13 @@
 
 import init, { JsBind } from "./pkg/hello_wasm.js";
-import { loop } from "./gamePacer.js";
+import { start } from "./gamePacer.js";
 let bind = null;
 
 export let board = [];
 
 init().then(() => {
     bind = JsBind.new(boardWidth, boardHeight);
-    loop();
+    start();
 });
 
 export function rust_ended() {
@@ -57,6 +57,10 @@ export function rust_loadBoard() {
     }
 }
 
-export function rust_move(player) {
-    bind.js_move(player)
+export function rust_move() {
+    bind.js_move()
+}
+
+export function rust_freeSpace(x, y){
+    return bind.js_free_space(x,y)
 }

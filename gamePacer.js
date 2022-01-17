@@ -4,14 +4,23 @@ import { place_player } from "./placing_logic.js";
 
 let turn = 0;
 
-export function loop() {
+export async function loop() {
+    console.log("loop")
+
     turn++;
-    if (!rust_ended())
-        place(rust_ended()).then(() => {
-            move(stepsPerTurn).then(loop)
-        });
+    if (!rust_ended()) {
+        await place()
+        await move(stepsPerTurn)
+        loop()
+    }
     else end();
 
+}
+
+export async function start() {
+    console.log("start")
+    await place("K");
+    loop()
 }
 
 async function move(iterations) {
@@ -20,12 +29,12 @@ async function move(iterations) {
     const stepTime = moveTime + moveWait;
 
     return new Promise(resolve => {
-        rust_move(0);
+        rust_move();
         rust_loadBoard();
         resetAnimationTime();
 
         setTimeout(() => {
-            rust_move(1);
+            rust_move();
             rust_loadBoard();
             resetAnimationTime();
 
@@ -41,13 +50,13 @@ async function move(iterations) {
     });
 }
 
-async function place() {
-    console.log("-- place --")
+async function place(piece) {
+    console.log("-- place -- ", piece)
 
     return new Promise(resolve => {
-        place_player("w").then(() => {
+        place_player("w", piece).then(() => {
             rust_loadBoard();
-            place_player("b").then(() => {
+            place_player("b", piece).then(() => {
                 rust_loadBoard();
                 resolve();
             })
